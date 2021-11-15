@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os.path
 import numpy as np
-from scipy import linalg.eigh_tridiagonal()
+import scipy
 
 
 def Einlesen(input_directory):
@@ -42,23 +42,59 @@ def Einlesen(input_directory):
 # input = open(schrodinger.inp)
 # input.readlines()
 
-    Eingang = [line for line in open("os.path.join(input_directory, schrodinger.inp))", "r"]
-    mass = [Eingang[0].split() [0]]
-    xMin = [Eingang[1].split() [0]]
-    xMax = [Eingang[1].split() [1]]
-    nPoint = [Eingang[1].split() [2]]
-    ev1 = [Eingang[2].split() [0]]
-    ev2 = [Eingang[2].split() [1]]
-    interpol = [Eingang[3].split() [0]]
-    points = [Eingang[5].split() [0]]
+    Eingang = [line for line in open("os.path.join(input_directory, schrodinger.inp)", "r")]
+    mass = [Eingang[0].split()[0]]
+    xMin = [Eingang[1].split()[0]]
+    xMax = [Eingang[1].split()[1]]
+    nPoint = [Eingang[1].split()[2]]
+    ev1 = [Eingang[2].split()[0]]
+    ev2 = [Eingang[2].split()[1]]
+    interpol = [Eingang[3].split()[0]]
+    points = [Eingang[5].split()[0]]
     xPot = []
     for aa in range(5, len(Eingang)):
-        xPot.append(Eingang[aa].split() [0])
+        xPot.append(Eingang[aa].split()[0])
     yPot = []
     for bb in range(5, len(Eingang)):
-        yPot.append(Eingang[bb].split() [1])
+        yPot.append(Eingang[bb].split()[1])
 
-    return mass, xMin, xMax, nPoin, ev1, ev2, interpol, points, xPot, yPot
+    return mass, xMin, xMax, nPoint, ev1, ev2, interpol, points, xPot, yPot
+
+
+def Interpolation(xPot, yPot, xMin, xMax, nPoint, Typ, ):
+    """Checks the interpolatioin type and interpolates the potential.
+    creates the potential.dat for plotting
+
+    Args:
+        xPot: given x Koordinates of the Potential
+        yPot: given y Koordinates of the Potential
+        xMin: minimal x koordinate
+        xMax: maximal x koordinate
+        nPoint: Number of Points for the potential.dat
+        Typ: type of interpolation to be used
+
+    Returns:
+        xkoords: the x koordinates of the potential
+        ykoords: the interpolates y koordinates for the potential
+        or Error Msg if Typ is not linear, cspline or polynomial
+    """
+    if Typ not == "linear", "polynomial", "cspline":
+        print("unvalid type, please enter either linear, polynomial or cspline")
+
+    xkoords = linspace(xMin, xMax, nPoint)
+
+    if Typ == "linear":
+        interpolfunc = scipy.interpolate.interp1d(xPot, yPot)
+
+    if Typ == "polynomial":
+        interpolfunc = scipy.interpolate.CubicSpline(xPot, yPot)
+
+    if Typ == "cspline":
+        interpolfunc = scipy.interpolate.KroghInterpolator(xPot, yPot)
+
+    ykoords = interpolfunc(xkoords)
+
+    return xkoords, ykoords
 
 
 
