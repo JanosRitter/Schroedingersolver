@@ -2,6 +2,7 @@
 import os.path
 import numpy as np
 import scipy
+from scipy.interpolate import interp1d, KroghInterpolator, CubicSpline
 
 
 def Einlesen(input_directory):
@@ -81,50 +82,39 @@ def Interpolation(xPot, yPot, xMin, xMax, nPoint, Typ, ):
     if Typ not == "linear", "polynomial", "cspline":
         print("unvalid type, please enter either linear, polynomial or cspline")
 
-    xmin = "".join(xMin)
-    xmax = "".join(xMax)
-    npoint = "".join(nPoint)
-    # converted list to string
-    Xmin = float(xmin)
-    Xmin = float(xmax)
-    Npoint = float(npoint)
-    # converted string to float, because linspace wont work otherwise
+    Xmin = float("".join(xMin))
+    Xmin = float("".join(xMax))
+    Npoint = float("".join(nPoint))
+    # converted list into string into float, because linspace wont work otherwise
     xkoords = np.linspace(Xmin, Xmax, Npoint)
 
+    Xpot = [float(ii) for ii in xPot]
+    Ypot = [float(ii) for ii in yPot]
+
     if Typ == "linear":
-        interpolfunc = scipy.interpolate.interp1d(xPot, yPot)
+        interpolfunc = scipy.interpolate.interp1d(Xpot, Ypot)
 
     if Typ == "polynomial":
-        interpolfunc = scipy.interpolate.CubicSpline(xPot, yPot)
+        interpolfunc = scipy.interpolate.CubicSpline(Xpot, Ypot)
 
     if Typ == "cspline":
-        interpolfunc = scipy.interpolate.KroghInterpolator(xPot, yPot)
+        interpolfunc = scipy.interpolate.KroghInterpolator(Xpot, Ypot)
 
     ykoords = interpolfunc(xkoords)
 
     return xkoords, ykoords
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 def Solver():
     """Soll die vorhin ausgegebenen Daten in die benötigten Werte umrechnen
 
     """
-    potential.dat
-    energies.dat
-    wavefuncs.dat
-    expvalues.dat
+    npoint = "".join(nPoint)
+    Npoint = float(npoint)
+
+    Abstand = (xkoords[0] - xkoords[-1]) / Npoint
+    Mass = float("".join(mass))
+    abkürzung = 1 / (Mass * Abstand ** 2)
+
 
     return lösung
