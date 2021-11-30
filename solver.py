@@ -81,7 +81,15 @@ def Interpolation(xPot, yPot, xMin, xMax, nPoint, Typ, ):
     if Typ not == "linear", "polynomial", "cspline":
         print("unvalid type, please enter either linear, polynomial or cspline")
 
-    xkoords = linspace(xMin, xMax, nPoint)
+    xmin = "".join(xMin)
+    xmax = "".join(xMax)
+    npoint = "".join(nPoint)
+    # converted list to string
+    Xmin = float(xmin)
+    Xmin = float(xmax)
+    Npoint = float(npoint)
+    # converted string to float, because linspace wont work otherwise
+    xkoords = np.linspace(Xmin, Xmax, Npoint)
 
     if Typ == "linear":
         interpolfunc = scipy.interpolate.interp1d(xPot, yPot)
