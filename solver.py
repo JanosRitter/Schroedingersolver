@@ -109,12 +109,14 @@ def Solver():
     """Soll die vorhin ausgegebenen Daten in die benötigten Werte umrechnen
 
     """
-    npoint = "".join(nPoint)
-    Npoint = float(npoint)
-
+    Npoint = float("".join(nPoint))
     Abstand = (xkoords[0] - xkoords[-1]) / Npoint
     Mass = float("".join(mass))
     abkürzung = 1 / (Mass * Abstand ** 2)
 
+    diagonale = np.array([abkürzung + ii for ii in ykoords])
+    off_diagonale = np.array([-abkürzung / 2] * (len(ykoords)-1))
+    energie, wavefct = scipy.linalg.eigh_tridiagonal(diagonale, off_diagonale)
 
-    return lösung
+
+    return energie, wavefct
