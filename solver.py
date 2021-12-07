@@ -19,29 +19,6 @@ def Einlesen(input_directory):
 
 
     """
-#  erster Versuch, hat nicht so ganz funtioniert
-
-#   directory = "input_directory"
-#   input = np.loadtxt(os.path.join(directory, schrodinger.dat))
-#   mass = input[0]  # Masse
-#   xMin = input[1, 0]  # minimale x Koordinate
-#   xMax = input[1, 1]  # maximale x Koordinate
-#   nPoint = input[1, 2]  # anzahl an punkten dazwischen
-#   ev1 = input[2, 0]  # first eigenvalue to print
-#   ev2 = input[2, 1]  # last eigenvalue to print
-#   interpol = input[3],  # hier noch ein default = linear irgendwie einbauen
-#   if interpol is not linear, polynomial, cspline:
-#       print("Wrong Interpolation type")
-#       break
-#   points = input[4]  # anzahl der interpolationspunkte
-#   xPot = input[5:, 0]  # x koordinate des Potentials
-#  yPot = input[5:, 1]  # y koordinate des Potentials
-
-#    return mass, xMin, xMax, nPoin, ev1, ev2, interpol, points, xPot, yPot
-
-# weiteres testen ob vielleicht was ganz anderes geht
-# input = open(schrodinger.inp)
-# input.readlines()
 
     Eingang = [line for line in open("os.path.join(input_directory, schrodinger.inp)", "r")]
     mass = [Eingang[0].split()[0]]
@@ -80,12 +57,13 @@ def Interpolation(xPot, yPot, xMin, xMax, nPoint, Typ, ):
         or Error Msg if Typ is not linear, cspline or polynomial
     """
     if Typ not == "linear", "polynomial", "cspline":
-        print("unvalid type, please enter either linear, polynomial or cspline")
+        print("unvalid type, please enter either linear,"
+              "polynomial or cspline")
 
     Xmin = float("".join(xMin))
     Xmin = float("".join(xMax))
     Npoint = float("".join(nPoint))
-    # converted list into string into float, because linspace wont work otherwise
+# converted list into string into float, because linspace wont work otherwise
     xkoords = np.linspace(Xmin, Xmax, Npoint)
 
     Xpot = [float(ii) for ii in xPot]
@@ -110,13 +88,21 @@ def Solver():
 
     """
     Npoint = float("".join(nPoint))
-    Abstand = (xkoords[0] - xkoords[-1]) / Npoint
+    Abstand = -(xkoords[0] - xkoords[-1]) / Npoint
     Mass = float("".join(mass))
     abkürzung = 1 / (Mass * Abstand ** 2)
-
+# rechner der energien und wellenfunktionen
     diagonale = np.array([abkürzung + ii for ii in ykoords])
     off_diagonale = np.array([-abkürzung / 2] * (len(ykoords)-1))
     energie, wavefct = scipy.linalg.eigh_tridiagonal(diagonale, off_diagonale)
+# normierung der Wellenfunktionen
+    wavefunc = wavefct.T
+    for index, wfunc in enumerate(wavefunc):
+        wavefunc[index, :] = wfunc / (np.sqrt(Abstand * np.sum(wfunc ** 2)))
+# Berechnung von Erwartungswerten
+    for wfunc in wavefunc:
+        expvalues = np.append(expvalues,
+                              [Abstand * np.sum(wfunc ** 2 * xkoords ** 2)],
+                              axis=0)
 
-
-    return energie, wavefct
+    return energie, wavefunc, expvalues
